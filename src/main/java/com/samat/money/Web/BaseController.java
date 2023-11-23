@@ -1,21 +1,29 @@
-package com.samat.money.Web.base;
+package com.samat.money.Web;
 
-import com.samat.money.Application.exceprion.CustomError;
 import com.samat.money.Application.exceprion.CustomException;
-import lombok.NonNull;
+import com.samat.money.Data.mapper.BaseMapper;
+import com.samat.money.Domain.constant.Error;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/base")
 @RequiredArgsConstructor
+@CacheConfig(cacheNames = "#{T(com.yourpackage.YourClass).getSimpleName()}")
 public abstract class BaseController<
         Entity, Index,
         Repository extends JpaRepository<Entity, Index>,
@@ -24,9 +32,12 @@ public abstract class BaseController<
 
     public abstract Repository getRepository();
 
+    public abstract Logger getLogger();
+
     public abstract Mapper getMapper();
 
     @GetMapping("/list")
+    @Cacheable
     public List<Element> getList() {
         List<Entity> entities = getRepository().findAll();
         return entities.stream()
@@ -35,47 +46,51 @@ public abstract class BaseController<
     }
 
     @GetMapping("/")
-    public Page<Element> getAll(int page, int size) {
+    public Page<Element> getAll(@RequestParam(defaultValue = "0") @Min(0) int page,
+                                @RequestParam(defaultValue = "25") @Min(1) @Max(100) int size) {
         Page<Entity> entities = getRepository().findAll(PageRequest.of(page, size));
         return entities.map(getMapper()::toElement);
     }
 
     @GetMapping("/{id}")
-    public Response getById(Index id) {
+    public Response getById(@PathVariable Index id) {
         Optional<Entity> entity = getRepository().findById(id);
         if (entity.isPresent()) {
             return getMapper().toResponse(entity.get());
         } else {
-            throw new CustomException(CustomError.ENTITY_NOT_FOUND);
+            throw new CustomException(Error.ENTITY_NOT_FOUND, getLogger());
         }
     }
 
     @PostMapping("/")
-    public Response create(@NonNull Request request) {
+    @CacheEvict(allEntries = true)
+    public Response create(@Valid @RequestBody Request request) {
         Entity entity = getMapper().toEntity(request);
         Entity savedEntity = getRepository().save(entity);
         return getMapper().toResponse(savedEntity);
     }
 
     @PutMapping("/{id}")
-    public Response update(Index id, @NonNull Request request) {
+    @CacheEvict(allEntries = true)
+    public Response update(@PathVariable Index id, @Valid @RequestBody Request request) {
         if (getRepository().existsById(id)) {
-                Entity entity = getRepository().getById(id);
-                getMapper().update(entity, request);
+            Entity entity = getRepository().getById(id);
+            getMapper().update(entity, request);
 
-                Entity updatedEntity = getRepository().save(entity);
-                return getMapper().toResponse(updatedEntity);
+            Entity updatedEntity = getRepository().save(entity);
+            return getMapper().toResponse(updatedEntity);
         } else {
-            throw new CustomException(CustomError.ENTITY_NOT_FOUND);
+            throw new CustomException(Error.ENTITY_NOT_FOUND, getLogger());
         }
     }
 
     @DeleteMapping("/{id}")
-    public void delete(Index id) {
+    @CacheEvict(allEntries = true)
+    public void delete(@PathVariable Index id) {
         if (getRepository().existsById(id)) {
             getRepository().deleteById(id);
         } else {
-            throw new CustomException(CustomError.ENTITY_NOT_FOUND);
+            throw new CustomException(Error.ENTITY_NOT_FOUND, getLogger());
         }
     }
 }

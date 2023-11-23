@@ -1,6 +1,6 @@
 package com.samat.money.Application.util;
 
-import com.samat.money.Application.exceprion.CustomError;
+import com.samat.money.Domain.constant.Error;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -28,7 +28,7 @@ public class SwaggerSaver implements ApplicationListener<ApplicationReadyEvent> 
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
         } catch (IOException e) {
-            log.error(CustomError.GATEWAY_NOT_ASK.getMessage(), e);
+            log.error(Error.GATEWAY_NOT_ASK.getMessage(), e);
             return;
         }
 
@@ -42,7 +42,7 @@ public class SwaggerSaver implements ApplicationListener<ApplicationReadyEvent> 
                 out.write(buffer, 0, bytesRead);
             }
         } catch (IOException e) {
-            log.error(CustomError.IO_EXCEPTION.getMessage(), e);
+            log.error(Error.IO_EXCEPTION.getMessage(), e);
         }
     }
 }

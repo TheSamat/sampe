@@ -1,4 +1,3 @@
-
 package com.samat.money.Domain.model;
 
 import lombok.*;

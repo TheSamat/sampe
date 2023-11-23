@@ -16,7 +16,7 @@ public class SwaggerConfig {
     public GroupedOpenApi publicUserApi() {
         return GroupedOpenApi.builder()
                 .group("api")
-                .packagesToScan("com.samat.money.controller")
+                .packagesToScan("com.samat.money.Web")
                 .build();
     }
 

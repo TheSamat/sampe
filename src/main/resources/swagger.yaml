@@ -8,12 +8,14 @@ info:
   title: Money Application API
   version: "1.0"
 servers:
-- description: Dev service
+- description: Local server
   url: http://localhost:8080
+- description: Prod server
+  url: http://
 paths:
   /sample/:
     get:
-      operationId: getAll
+      operationId: getAll_1
       parameters:
       - in: query
         name: page
@@ -22,6 +24,7 @@ paths:
           type: integer
           format: int32
           default: 0
+          minimum: 0
       - in: query
         name: size
         required: false
@@ -29,6 +32,8 @@ paths:
           type: integer
           format: int32
           default: 25
+          maximum: 100
+          minimum: 1
       responses:
         "200":
           content:
@@ -55,17 +60,9 @@ paths:
           description: OK
       tags:
       - sample-controller
-  /sample/error:
-    get:
-      operationId: error
-      responses:
-        "200":
-          description: OK
-      tags:
-      - sample-controller
   /sample/list:
     get:
-      operationId: getList
+      operationId: getList_1
       responses:
         "200":
           content:
@@ -79,7 +76,7 @@ paths:
       - sample-controller
   /sample/{id}:
     delete:
-      operationId: delete
+      operationId: delete_1
       parameters:
       - in: path
         name: id
@@ -93,7 +90,7 @@ paths:
       tags:
       - sample-controller
     get:
-      operationId: getById
+      operationId: getById_1
       parameters:
       - in: path
         name: id
@@ -111,7 +108,7 @@ paths:
       tags:
       - sample-controller
     put:
-      operationId: create
+      operationId: update_1
       parameters:
       - in: path
         name: id
@@ -134,6 +131,124 @@ paths:
           description: OK
       tags:
       - sample-controller
+  /sample_dict/:
+    get:
+      operationId: getAll
+      parameters:
+      - in: query
+        name: page
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+      - in: query
+        name: size
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 25
+          maximum: 100
+          minimum: 1
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PageSampleResponse'
+          description: OK
+      tags:
+      - dict-sample-controller
+    post:
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SampleRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SampleResponse'
+          description: OK
+      tags:
+      - dict-sample-controller
+  /sample_dict/list:
+    get:
+      operationId: getList
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SampleResponse'
+          description: OK
+      tags:
+      - dict-sample-controller
+  /sample_dict/{id}:
+    delete:
+      operationId: delete
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+      tags:
+      - dict-sample-controller
+    get:
+      operationId: getById
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SampleResponse'
+          description: OK
+      tags:
+      - dict-sample-controller
+    put:
+      operationId: update
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SampleRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SampleResponse'
+          description: OK
+      tags:
+      - dict-sample-controller
 components:
   schemas:
     PageSampleElement:
@@ -143,6 +258,38 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SampleElement'
+        empty:
+          type: boolean
+        first:
+          type: boolean
+        last:
+          type: boolean
+        number:
+          type: integer
+          format: int32
+        numberOfElements:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        size:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+    PageSampleResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/SampleResponse'
         empty:
           type: boolean
         first:
