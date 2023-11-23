@@ -1,7 +1,7 @@
 package com.samat.money.integration;
 
-import com.samat.money.model.SampleRequest;
-import com.samat.money.util.JsonUtil;
+import com.samat.money.Domain.model.SampleRequest;
+import com.samat.money.Application.util.JsonUtil;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.json.JSONObject;

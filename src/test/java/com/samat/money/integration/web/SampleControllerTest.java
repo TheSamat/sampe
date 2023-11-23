@@ -1,7 +1,7 @@
 package com.samat.money.integration.web;
 
 import com.samat.money.integration.AuthTestBase;
-import com.samat.money.model.SampleRequest;
+import com.samat.money.Domain.model.SampleRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
