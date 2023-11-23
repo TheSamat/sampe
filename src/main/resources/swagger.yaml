@@ -1,88 +1,29 @@
 openapi: 3.0.1
 info:
-  title: Money Application API
-  description: API for application Many
   contact:
+    email: seitbekuulusalavat@gmail.com
     name: Salavat Seitbek uulu
     url: https://www.linkedin.com/in/salavat-seitbek-uulu-02178a1b7
-    email: seitbekuulusalavat@gmail.com
+  description: API for application Many
+  title: Money Application API
   version: "1.0"
 servers:
-- url: http://localhost:8080
-  description: Dev service
+- description: Dev service
+  url: http://localhost:8080
 paths:
-  /sample/{id}:
-    get:
-      tags:
-      - sample-controller
-      operationId: getById
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int32
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/SampleResponse'
-    put:
-      tags:
-      - sample-controller
-      operationId: create
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int32
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SampleRequest'
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/SampleResponse'
-    delete:
-      tags:
-      - sample-controller
-      operationId: delete
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int32
-      responses:
-        "200":
-          description: OK
   /sample/:
     get:
-      tags:
-      - sample-controller
       operationId: getAll
       parameters:
-      - name: page
-        in: query
+      - in: query
+        name: page
         required: false
         schema:
           type: integer
           format: int32
           default: 0
-      - name: size
-        in: query
+      - in: query
+        name: size
         required: false
         schema:
           type: integer
@@ -90,14 +31,14 @@ paths:
           default: 25
       responses:
         "200":
-          description: OK
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/PageSampleElement'
-    post:
+          description: OK
       tags:
       - sample-controller
+    post:
       operationId: create_1
       requestBody:
         content:
@@ -107,27 +48,152 @@ paths:
         required: true
       responses:
         "200":
-          description: OK
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/SampleResponse'
-  /sample/list:
-    get:
+          description: OK
       tags:
       - sample-controller
-      operationId: getList
+  /sample/error:
+    get:
+      operationId: error
       responses:
         "200":
           description: OK
+      tags:
+      - sample-controller
+  /sample/list:
+    get:
+      operationId: getList
+      responses:
+        "200":
           content:
             '*/*':
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/SampleElement'
+          description: OK
+      tags:
+      - sample-controller
+  /sample/{id}:
+    delete:
+      operationId: delete
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+      tags:
+      - sample-controller
+    get:
+      operationId: getById
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SampleResponse'
+          description: OK
+      tags:
+      - sample-controller
+    put:
+      operationId: create
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SampleRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SampleResponse'
+          description: OK
+      tags:
+      - sample-controller
 components:
   schemas:
+    PageSampleElement:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/SampleElement'
+        empty:
+          type: boolean
+        first:
+          type: boolean
+        last:
+          type: boolean
+        number:
+          type: integer
+          format: int32
+        numberOfElements:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        size:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        unpaged:
+          type: boolean
+    SampleElement:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
     SampleRequest:
       type: object
       properties:
@@ -138,71 +204,13 @@ components:
     SampleResponse:
       type: object
       properties:
-        id:
-          type: integer
-          format: int32
         code:
           type: string
-        name:
-          type: string
-    SampleElement:
-      type: object
-      properties:
         id:
           type: integer
           format: int32
         name:
           type: string
-    PageSampleElement:
-      type: object
-      properties:
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
-          type: integer
-          format: int32
-        size:
-          type: integer
-          format: int32
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/SampleElement'
-        number:
-          type: integer
-          format: int32
-        sort:
-          $ref: '#/components/schemas/SortObject'
-        first:
-          type: boolean
-        last:
-          type: boolean
-        numberOfElements:
-          type: integer
-          format: int32
-        pageable:
-          $ref: '#/components/schemas/PageableObject'
-        empty:
-          type: boolean
-    PageableObject:
-      type: object
-      properties:
-        offset:
-          type: integer
-          format: int64
-        sort:
-          $ref: '#/components/schemas/SortObject'
-        pageSize:
-          type: integer
-          format: int32
-        pageNumber:
-          type: integer
-          format: int32
-        unpaged:
-          type: boolean
-        paged:
-          type: boolean
     SortObject:
       type: object
       properties:

@@ -2,6 +2,8 @@ package com.samat.money.controller;
 
 import com.samat.money.service.BaseService;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,13 +31,13 @@ public abstract class BaseController<Index, Element, Response, Request,
     }
 
     @PostMapping("/")
-    public Response create(@Valid @RequestBody Request request) {
-        return getService().create(request);
+    public ResponseEntity<Response> create(@Valid @RequestBody Request request) {
+        return new ResponseEntity<>(getService().create(request), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public Response create(@PathVariable Index id, @Valid @RequestBody Request request) {
-        return getService().update(id, request);
+    public ResponseEntity<Response> create(@PathVariable Index id, @Valid @RequestBody Request request) {
+        return new ResponseEntity<>(getService().update(id, request), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

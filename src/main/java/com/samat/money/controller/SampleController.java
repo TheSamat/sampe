@@ -5,6 +5,7 @@ import com.samat.money.model.SampleRequest;
 import com.samat.money.model.SampleResponse;
 import com.samat.money.service.SampleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,5 +18,10 @@ public class SampleController extends BaseController<Short, SampleElement, Sampl
     @Override
     protected SampleService getService() {
         return sampleService;
+    }
+
+    @GetMapping("/error")
+    public void error(){
+        sampleService.error();
     }
 }

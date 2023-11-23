@@ -1,6 +1,8 @@
 package com.samat.money.service;
 
 import com.samat.money.entity.SampleEntity;
+import com.samat.money.exceprion.CustomError;
+import com.samat.money.exceprion.CustomException;
 import com.samat.money.mapper.SampleMapper;
 import com.samat.money.model.SampleElement;
 import com.samat.money.model.SampleRequest;
@@ -10,8 +12,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +33,7 @@ public class SampleServiceImpl extends AbstractService<SampleEntity, Short, Samp
     }
 
     @Override
-    public List<SampleElement> getList() {
-        return super.getList();
+    public void error() {
+        throw new CustomException(CustomError.ENTITY_NOT_FOUND);
     }
 }
